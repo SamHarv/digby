@@ -3,12 +3,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import './home_page.dart';
 import 'package:flutter/services.dart';
 
-void main() {
+Future main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initialization(null);
   runApp(const ProviderScope(child: MyApp()));
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.landscapeLeft,
     DeviceOrientation.landscapeRight,
   ]);
+}
+
+Future initialization(BuildContext? context) async {
+  await Future.delayed(const Duration(seconds: 3));
 }
 
 class MyApp extends StatelessWidget {

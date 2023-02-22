@@ -12,12 +12,6 @@ import 'widgets/button.dart';
 import 'treats/timeout.dart';
 import 'treats/diet_coke.dart';
 
-// Add opening screen for O2 Tech logo
-// make keyboard arrows control too
-// Make barriers little goblins or something - make barrierX more random
-// haptic feedback when hitting obstacle
-// Add sound effects - do them yourself
-
 // Make Grandie version of game for Mother's day - coffee boosters, Chardy, Bundy, green clothes
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -52,8 +46,10 @@ class _HomePageState extends ConsumerState<HomePage> {
   Color backgroundColour = Colors.black;
   static List<double> barrierX = [2, 3.5, 5, 6.5, 8, 9.5]; //adjust these
   static double barrierWidth = 0.1;
-  List<double> barrierHeight = [0.2, 0.5, 0.8, 0.1, 0.6, 0.2];
+  List<double> barrierHeight = [0.6, 0.5, 0.8, 0.3, 1.2, 0.2];
+  List<bool> isGoblin = [false, false, false, false, true, false];
   bool gameModeInfinite = false;
+  bool goblinMove = true;
 
   void startGame() {
     gameHasStarted = true;
@@ -65,8 +61,12 @@ class _HomePageState extends ConsumerState<HomePage> {
         _showDialogue();
       }
 
+      gameModeInfinite ? dietCokeX = -3 : dietCokeX = -0.5;
+
       moveMap();
       smashedZingerBox();
+
+      goblinMove = !goblinMove;
 
       time += 0.05;
     });
@@ -154,19 +154,6 @@ class _HomePageState extends ConsumerState<HomePage> {
         });
   }
 
-  Timer executeRedFlash() {
-    return Timer(const Duration(milliseconds: 0), flashRed);
-  }
-
-  void flashRed() {
-    backgroundColour = Colors.red;
-    Timer(const Duration(milliseconds: 100), returnToBlack);
-  }
-
-  void returnToBlack() {
-    backgroundColour = Colors.black;
-  }
-
   bool digbyIsDead() {
     for (int i = 0; i < barrierX.length; i++) {
       if (barrierX[i] <= digbyX + 0.02 &&
@@ -183,7 +170,6 @@ class _HomePageState extends ConsumerState<HomePage> {
         timeOutX = 0.7;
         velocity = 5;
         barrierX = [2, 3.5, 5, 6.5, 8, 9.5];
-        executeRedFlash();
         return false;
       } else if (barrierX[i] <= digbyX + 0.02 &&
           barrierX[i] + barrierWidth >= digbyX - 0.02 &&
@@ -193,7 +179,6 @@ class _HomePageState extends ConsumerState<HomePage> {
         timeOutX = 0.7;
         velocity = 5;
         barrierX = [2, 3.5, 5, 6.5, 8, 9.5];
-        executeRedFlash();
         return false;
       }
     }
@@ -321,6 +306,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     final isDarkMode = ref.watch(darkMode);
     final isInfiniteMode = ref.watch(infiniteMode);
     isInfiniteMode ? gameModeInfinite = true : gameModeInfinite = false;
+    backgroundColour = isDarkMode ? Colors.black : Colors.blue;
 
     return Scaffold(
       drawer: const AppDrawer(),
@@ -332,7 +318,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             child: Stack(
               children: [
                 Container(
-                  color: isDarkMode ? Colors.black : Colors.blue,
+                  color: backgroundColour,
                   child: Center(
                     child: Container(
                       alignment: Alignment(digbyX, digbyY),
@@ -381,31 +367,43 @@ class _HomePageState extends ConsumerState<HomePage> {
                   barrierX: barrierX[0],
                   barrierWidth: barrierWidth,
                   barrierHeight: barrierHeight[0],
+                  goblinMove: goblinMove,
+                  isGoblin: isGoblin[0],
                 ),
                 Obstacle(
                   barrierX: barrierX[1],
                   barrierWidth: barrierWidth,
                   barrierHeight: barrierHeight[1],
+                  goblinMove: goblinMove,
+                  isGoblin: isGoblin[1],
                 ),
                 Obstacle(
                   barrierX: barrierX[2],
                   barrierWidth: barrierWidth,
                   barrierHeight: barrierHeight[2],
+                  goblinMove: goblinMove,
+                  isGoblin: isGoblin[2],
                 ),
                 Obstacle(
                   barrierX: barrierX[3],
                   barrierWidth: barrierWidth,
                   barrierHeight: barrierHeight[3],
+                  goblinMove: goblinMove,
+                  isGoblin: isGoblin[3],
                 ),
                 Obstacle(
                   barrierX: barrierX[4],
                   barrierWidth: barrierWidth,
                   barrierHeight: barrierHeight[4],
+                  goblinMove: goblinMove,
+                  isGoblin: isGoblin[4],
                 ),
                 Obstacle(
                   barrierX: barrierX[5],
                   barrierWidth: barrierWidth,
                   barrierHeight: barrierHeight[5],
+                  goblinMove: goblinMove,
+                  isGoblin: isGoblin[5],
                 ),
                 TimeOutBar(timeOutX: timeOutX),
                 isInfiniteMode
