@@ -12,7 +12,6 @@ import 'widgets/button.dart';
 import 'treats/timeout.dart';
 import 'treats/diet_coke.dart';
 
-// Make Grandie version of game for Mother's day - coffee boosters, Chardy, Bundy, green clothes
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
@@ -28,6 +27,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   double timeOutY = 1;
   double dietCokeX = -0.5;
   double dietCokeY = 1.06;
+  bool dietCokeConsumed = false;
   double zingerBoxX = 30;
   double zingerBoxY = 1;
   double time = 0;
@@ -199,6 +199,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     if ((digbyX - dietCokeX).abs() < 0.1 && (digbyY - dietCokeY).abs() < 0.07) {
       setState(() {
         dietCokeX += 2;
+        dietCokeConsumed = true;
         digbySize = 0.2;
         velocity = 5;
         lives = 1;
@@ -408,7 +409,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                 TimeOutBar(timeOutX: timeOutX),
                 isInfiniteMode
                     ? const DietCoke(dietCokeX: -3)
-                    : DietCoke(dietCokeX: dietCokeX),
+                    : DietCoke(dietCokeX: dietCokeConsumed ? 1.5 : -0.5),
                 ZingerBox(zingerBoxX: zingerBoxX),
                 Padding(
                   padding: const EdgeInsets.all(16),
