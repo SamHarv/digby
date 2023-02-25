@@ -107,6 +107,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       digbyY = 1;
       timeOutX = 0.5;
       dietCokeX = -0.5;
+      dietCokeConsumed = false;
       zingerBoxX = 30;
       direction = 'right';
       digbySize = 0.4;
@@ -160,16 +161,19 @@ class _HomePageState extends ConsumerState<HomePage> {
           barrierX[i] + barrierWidth >= digbyX - 0.02 &&
           digbyY >= 1 - barrierHeight[i] &&
           (digbySize == 0.4 || digbySize == 0.2) &&
-          lives == 1) {
+          lives == 1 &&
+          !gameModeInfinite) {
         return true;
       } else if (barrierX[i] <= digbyX + 0.02 &&
           barrierX[i] + barrierWidth >= digbyX - 0.02 &&
           digbyY >= 1 - barrierHeight[i] &&
           digbySize == 0.4) {
-        lives -= 1;
+        gameModeInfinite ? lives = lives : lives -= 1;
         timeOutX = 0.7;
         velocity = 5;
-        barrierX = [2, 3.5, 5, 6.5, 8, 9.5];
+        gameModeInfinite
+            ? barrierX = barrierX
+            : barrierX = [2, 3.5, 5, 6.5, 8, 9.5];
         return false;
       } else if (barrierX[i] <= digbyX + 0.02 &&
           barrierX[i] + barrierWidth >= digbyX - 0.02 &&
