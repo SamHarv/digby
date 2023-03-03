@@ -1,16 +1,21 @@
 import 'dart:async';
-import 'package:digby/characters/obstacles.dart';
-import 'package:digby/providers.dart';
-import 'package:digby/treats/zinger_box.dart';
-import 'package:digby/widgets/app_drawer.dart';
+import 'package:digby/data/db.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-import 'characters/digby.dart';
-import 'characters/jumping.dart';
-import 'widgets/button.dart';
-import 'treats/timeout.dart';
-import 'treats/diet_coke.dart';
+import './providers.dart';
+
+import './widgets/app_drawer.dart';
+import './widgets/button.dart';
+
+import './characters/obstacles.dart';
+import './characters/digby.dart';
+import './characters/jumping.dart';
+
+import './treats/zinger_box.dart';
+import './treats/timeout.dart';
+import './treats/diet_coke.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -40,6 +45,8 @@ class _HomePageState extends ConsumerState<HomePage> {
   bool midJump = false;
   var gameFont = const TextStyle(color: Colors.white, fontSize: 20);
   int score = 0;
+  final highScoreBox = Hive.box('highscore');
+  HighScore db = HighScore();
   bool gameHasStarted = false;
   double gameSpeed = 0.02;
   int lives = 3;
@@ -50,6 +57,16 @@ class _HomePageState extends ConsumerState<HomePage> {
   List<bool> isGoblin = [false, false, false, false, true, false];
   bool gameModeInfinite = false;
   bool goblinMove = true;
+
+  @override
+  void initState() {
+    if (highScoreBox.get('key') == null) {
+      db.createData();
+    } else {
+      db.getData();
+    }
+    super.initState();
+  }
 
   void startGame() {
     gameHasStarted = true;
@@ -123,6 +140,12 @@ class _HomePageState extends ConsumerState<HomePage> {
         barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
+          if (score > db.highScore) {
+            db.highScore = score;
+            db.updateData();
+          } else {
+            db.highScore = db.highScore;
+          }
           return AlertDialog(
             backgroundColor: Colors.blueGrey,
             title: const Center(
@@ -468,6 +491,19 @@ class _HomePageState extends ConsumerState<HomePage> {
                                     color: Colors.red, fontSize: 20)
                                 : const TextStyle(
                                     color: Colors.white, fontSize: 20),
+                          )
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          Text(
+                            'HIGH SCORE',
+                            style: gameFont,
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            '${db.highScore}',
+                            style: gameFont,
                           )
                         ],
                       ),
