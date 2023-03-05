@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:digby/data/db.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -24,7 +25,8 @@ class HomePage extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _HomePageState();
 }
 
-class _HomePageState extends ConsumerState<HomePage> {
+class _HomePageState extends ConsumerState<HomePage>
+    with SingleTickerProviderStateMixin {
   static double digbyX = 0;
   static double digbyY = 1;
   double digbySize = 0.4;
@@ -57,6 +59,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   List<bool> isGoblin = [false, false, false, false, true, false];
   bool gameModeInfinite = false;
   bool goblinMove = true;
+  late FocusNode _focusNode;
 
   @override
   void initState() {
@@ -65,6 +68,8 @@ class _HomePageState extends ConsumerState<HomePage> {
     } else {
       db.getData();
     }
+    _focusNode = FocusNode();
+    _focusNode.requestFocus();
     super.initState();
   }
 
@@ -336,222 +341,267 @@ class _HomePageState extends ConsumerState<HomePage> {
     isInfiniteMode ? gameModeInfinite = true : gameModeInfinite = false;
     backgroundColour = isDarkMode ? Colors.black : Colors.blue;
 
-    return Scaffold(
-      drawer: const AppDrawer(),
-      key: _scaffoldKey,
-      body: Column(
-        children: [
-          Expanded(
-            flex: 3,
-            child: Stack(
-              children: [
-                Container(
-                  color: backgroundColour,
-                  child: Center(
-                    child: Container(
-                      alignment: Alignment(digbyX, digbyY),
-                      child: midJump
-                          ? Jumping(
-                              direction: direction,
-                              size: digbySize,
-                            )
-                          : Digby(
-                              direction: direction,
-                              movement: movement,
-                              size: digbySize,
-                            ),
-                    ),
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  alignment: Alignment.topLeft,
-                  child: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        _scaffoldKey.currentState?.openDrawer();
-                      });
-                    },
-                    icon: const Icon(
-                      Icons.settings,
-                      color: Colors.white,
-                      size: 40,
-                    ),
-                  ),
-                ),
-                Container(
-                  alignment: const Alignment(0, 0),
-                  child: gameHasStarted
-                      ? const Text('')
-                      : const Text(
-                          'P R E S S  A N Y  B U T T O N  T O  P L A Y',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                          ),
-                        ),
-                ),
-                Obstacle(
-                  barrierX: barrierX[0],
-                  barrierWidth: barrierWidth,
-                  barrierHeight: barrierHeight[0],
-                  goblinMove: goblinMove,
-                  isGoblin: isGoblin[0],
-                ),
-                Obstacle(
-                  barrierX: barrierX[1],
-                  barrierWidth: barrierWidth,
-                  barrierHeight: barrierHeight[1],
-                  goblinMove: goblinMove,
-                  isGoblin: isGoblin[1],
-                ),
-                Obstacle(
-                  barrierX: barrierX[2],
-                  barrierWidth: barrierWidth,
-                  barrierHeight: barrierHeight[2],
-                  goblinMove: goblinMove,
-                  isGoblin: isGoblin[2],
-                ),
-                Obstacle(
-                  barrierX: barrierX[3],
-                  barrierWidth: barrierWidth,
-                  barrierHeight: barrierHeight[3],
-                  goblinMove: goblinMove,
-                  isGoblin: isGoblin[3],
-                ),
-                Obstacle(
-                  barrierX: barrierX[4],
-                  barrierWidth: barrierWidth,
-                  barrierHeight: barrierHeight[4],
-                  goblinMove: goblinMove,
-                  isGoblin: isGoblin[4],
-                ),
-                Obstacle(
-                  barrierX: barrierX[5],
-                  barrierWidth: barrierWidth,
-                  barrierHeight: barrierHeight[5],
-                  goblinMove: goblinMove,
-                  isGoblin: isGoblin[5],
-                ),
-                TimeOutBar(timeOutX: timeOutX),
-                isInfiniteMode
-                    ? const DietCoke(dietCokeX: -3)
-                    : DietCoke(dietCokeX: dietCokeConsumed ? 1.5 : -0.5),
-                ZingerBox(zingerBoxX: zingerBoxX),
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Column(
-                        children: [
-                          Text(
-                            'DIGBY',
-                            style: gameFont,
-                          ),
-                          const SizedBox(height: 10),
-                          Row(
-                            children: [
-                              Icon(
-                                lives >= 1
-                                    ? Icons.favorite
-                                    : Icons.favorite_border,
-                                color: lives >= 1 ? Colors.red : Colors.white,
-                                size: 36,
-                              ),
-                              Icon(
-                                lives >= 2
-                                    ? Icons.favorite
-                                    : Icons.favorite_border,
-                                color: lives >= 2 ? Colors.red : Colors.white,
-                                size: 36,
-                              ),
-                              Icon(
-                                lives >= 3
-                                    ? Icons.favorite
-                                    : Icons.favorite_border,
-                                color: lives >= 3 ? Colors.red : Colors.white,
-                                size: 36,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Text(
-                            'SCORE',
-                            style: gameFont,
-                          ),
-                          const SizedBox(height: 10),
-                          Text(
-                            isInfiniteMode ? '0' : '$score',
-                            style: isInfiniteMode
-                                ? const TextStyle(
-                                    color: Colors.red, fontSize: 20)
-                                : const TextStyle(
-                                    color: Colors.white, fontSize: 20),
-                          )
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Text(
-                            'HIGH SCORE',
-                            style: gameFont,
-                          ),
-                          const SizedBox(height: 10),
-                          Text(
-                            '${db.highScore}',
-                            style: gameFont,
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Container(
-              color: isDarkMode ? Colors.blueGrey : Colors.green,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    return RawKeyboardListener(
+      focusNode: _focusNode,
+      onKey: (event) {
+        if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
+          if (gameHasStarted) {
+            direction = 'right';
+            eatenTimeOut();
+            downedDietCoke();
+            smashedZingerBox();
+            if (event is RawKeyDownEvent && (digbyX + 0.02 < 1)) {
+              setState(() {
+                digbyX += 0.09;
+                movement = !movement;
+              });
+            }
+          } else {
+            startGame();
+          }
+        } else if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
+          if (gameHasStarted) {
+            direction = 'left';
+            eatenTimeOut();
+            downedDietCoke();
+            smashedZingerBox();
+            if (event is RawKeyDownEvent && (digbyX - 0.02 > -1)) {
+              digbyX -= 0.09;
+              movement = !movement;
+            }
+          } else {
+            startGame();
+          }
+        } else if (event is RawKeyDownEvent &&
+            (event.logicalKey == LogicalKeyboardKey.space ||
+                event.logicalKey == LogicalKeyboardKey.arrowUp)) {
+          jump();
+        }
+      },
+      child: Scaffold(
+        drawer: const AppDrawer(),
+        key: _scaffoldKey,
+        body: Column(
+          children: [
+            Expanded(
+              flex: 3,
+              child: Stack(
                 children: [
-                  Button(
-                    function: moveLeft,
-                    buttonWidth: MediaQuery.of(context).size.width * 0.23,
-                    child: const Icon(
-                      Icons.arrow_back,
-                      size: 40,
-                      color: Colors.white,
+                  Container(
+                    color: backgroundColour,
+                    child: Center(
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 120),
+                        alignment: Alignment(digbyX, digbyY),
+                        child: midJump
+                            ? Jumping(
+                                direction: direction,
+                                size: digbySize,
+                              )
+                            : Digby(
+                                direction: direction,
+                                movement: movement,
+                                size: digbySize,
+                              ),
+                      ),
                     ),
                   ),
-                  Button(
-                    function: moveRight,
-                    buttonWidth: MediaQuery.of(context).size.width * 0.23,
-                    child: const Icon(
-                      Icons.arrow_forward,
-                      size: 40,
-                      color: Colors.white,
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    alignment: Alignment.topLeft,
+                    child: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _scaffoldKey.currentState?.openDrawer();
+                        });
+                      },
+                      icon: const Icon(
+                        Icons.settings,
+                        color: Colors.white,
+                        size: 40,
+                      ),
                     ),
                   ),
-                  Button(
-                    function: jump,
-                    buttonWidth: MediaQuery.of(context).size.width * 0.48,
-                    child: const Icon(
-                      Icons.arrow_upward,
-                      size: 40,
-                      color: Colors.white,
+                  Container(
+                    alignment: const Alignment(0, 0),
+                    child: gameHasStarted
+                        ? const Text('')
+                        : const Text(
+                            'P R E S S  A N Y  B U T T O N  T O  P L A Y',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                            ),
+                          ),
+                  ),
+                  Obstacle(
+                    barrierX: barrierX[0],
+                    barrierWidth: barrierWidth,
+                    barrierHeight: barrierHeight[0],
+                    goblinMove: goblinMove,
+                    isGoblin: isGoblin[0],
+                  ),
+                  Obstacle(
+                    barrierX: barrierX[1],
+                    barrierWidth: barrierWidth,
+                    barrierHeight: barrierHeight[1],
+                    goblinMove: goblinMove,
+                    isGoblin: isGoblin[1],
+                  ),
+                  Obstacle(
+                    barrierX: barrierX[2],
+                    barrierWidth: barrierWidth,
+                    barrierHeight: barrierHeight[2],
+                    goblinMove: goblinMove,
+                    isGoblin: isGoblin[2],
+                  ),
+                  Obstacle(
+                    barrierX: barrierX[3],
+                    barrierWidth: barrierWidth,
+                    barrierHeight: barrierHeight[3],
+                    goblinMove: goblinMove,
+                    isGoblin: isGoblin[3],
+                  ),
+                  Obstacle(
+                    barrierX: barrierX[4],
+                    barrierWidth: barrierWidth,
+                    barrierHeight: barrierHeight[4],
+                    goblinMove: goblinMove,
+                    isGoblin: isGoblin[4],
+                  ),
+                  Obstacle(
+                    barrierX: barrierX[5],
+                    barrierWidth: barrierWidth,
+                    barrierHeight: barrierHeight[5],
+                    goblinMove: goblinMove,
+                    isGoblin: isGoblin[5],
+                  ),
+                  TimeOutBar(timeOutX: timeOutX),
+                  isInfiniteMode
+                      ? const DietCoke(dietCokeX: -3)
+                      : DietCoke(dietCokeX: dietCokeConsumed ? 1.5 : -0.5),
+                  ZingerBox(zingerBoxX: zingerBoxX),
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Column(
+                          children: [
+                            Text(
+                              'DIGBY',
+                              style: gameFont,
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              children: [
+                                Icon(
+                                  lives >= 1
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
+                                  color: lives >= 1 ? Colors.red : Colors.white,
+                                  size: 36,
+                                ),
+                                Icon(
+                                  lives >= 2
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
+                                  color: lives >= 2 ? Colors.red : Colors.white,
+                                  size: 36,
+                                ),
+                                Icon(
+                                  lives >= 3
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
+                                  color: lives >= 3 ? Colors.red : Colors.white,
+                                  size: 36,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Text(
+                              'SCORE',
+                              style: gameFont,
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              isInfiniteMode ? '0' : '$score',
+                              style: isInfiniteMode
+                                  ? const TextStyle(
+                                      color: Colors.red, fontSize: 20)
+                                  : const TextStyle(
+                                      color: Colors.white, fontSize: 20),
+                            )
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Text(
+                              'HIGH SCORE',
+                              style: gameFont,
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              '${db.highScore}',
+                              style: gameFont,
+                            )
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
-          ),
-        ],
+            Expanded(
+              child: Container(
+                color: isDarkMode ? Colors.blueGrey : Colors.green,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Button(
+                      function: moveLeft,
+                      buttonWidth: MediaQuery.of(context).size.width * 0.23,
+                      child: const Icon(
+                        Icons.arrow_back,
+                        size: 40,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Button(
+                      function: moveRight,
+                      buttonWidth: MediaQuery.of(context).size.width * 0.23,
+                      child: const Icon(
+                        Icons.arrow_forward,
+                        size: 40,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Button(
+                      function: jump,
+                      buttonWidth: MediaQuery.of(context).size.width * 0.48,
+                      child: const Icon(
+                        Icons.arrow_upward,
+                        size: 40,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
   }
 }
