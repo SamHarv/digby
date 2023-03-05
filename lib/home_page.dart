@@ -191,6 +191,7 @@ class _HomePageState extends ConsumerState<HomePage>
           (digbySize == 0.4 || digbySize == 0.2) &&
           lives == 1 &&
           !gameModeInfinite) {
+        HapticFeedback.heavyImpact();
         return true;
       } else if (barrierX[i] <= digbyX + 0.02 &&
           barrierX[i] + barrierWidth >= digbyX - 0.02 &&
@@ -199,6 +200,7 @@ class _HomePageState extends ConsumerState<HomePage>
         gameModeInfinite ? lives = lives : lives -= 1;
         timeOutX = 0.7;
         velocity = 5;
+        HapticFeedback.mediumImpact();
         gameModeInfinite
             ? barrierX = barrierX
             : barrierX = [2, 3.5, 5, 6.5, 8, 9.5];
@@ -207,6 +209,7 @@ class _HomePageState extends ConsumerState<HomePage>
           barrierX[i] + barrierWidth >= digbyX - 0.02 &&
           digbyY >= 1 - barrierHeight[i] &&
           digbySize == 0.8) {
+        HapticFeedback.lightImpact();
         digbySize = 0.4;
         timeOutX = 0.7;
         velocity = 5;
