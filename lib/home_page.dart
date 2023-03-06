@@ -41,8 +41,8 @@ class _HomePageState extends ConsumerState<HomePage>
   double height = 0;
   double initialHeight = digbyY;
   String direction = 'right';
-  double gravity = -3; // was -4.9
-  double velocity = 5;
+  double gravity = -4.9;
+  double velocity = 6;
   bool movement = false;
   bool midJump = false;
   var gameFont = const TextStyle(color: Colors.white, fontSize: 20);
@@ -53,7 +53,7 @@ class _HomePageState extends ConsumerState<HomePage>
   double gameSpeed = 0.02;
   int lives = 3;
   Color backgroundColour = Colors.black;
-  static List<double> barrierX = [2, 3.5, 5, 6.5, 8, 9.5]; //adjust these
+  static List<double> barrierX = [2, 3.5, 5, 6.5, 8, 9.5];
   static double barrierWidth = 0.1;
   List<double> barrierHeight = [0.6, 0.5, 0.8, 0.3, 1.2, 0.2];
   List<bool> isGoblin = [false, false, false, false, true, false];
@@ -75,21 +75,16 @@ class _HomePageState extends ConsumerState<HomePage>
 
   void startGame() {
     gameHasStarted = true;
-
     Timer.periodic(const Duration(milliseconds: 50), (timer) {
       if (digbyIsDead()) {
         timer.cancel();
         gameHasStarted = false;
         _showDialogue();
       }
-
       gameModeInfinite ? dietCokeX = -3 : dietCokeX = -0.5;
-
       moveMap();
       smashedZingerBox();
-
       goblinMove = !goblinMove;
-
       time += 0.05;
     });
   }
@@ -100,15 +95,12 @@ class _HomePageState extends ConsumerState<HomePage>
         barrierX[i] -= gameSpeed;
         zingerBoxX -= 0.002;
       });
-
       if (barrierX[i] < -1.5) {
         barrierX[i] += 9;
       }
-
       if (zingerBoxX < -1.5 && zingerBoxX > -2) {
         zingerBoxX += 9;
       }
-
       if (barrierX[i] < digbyX && barrierX[i] > digbyX - 0.1) {
         gameModeInfinite ? score = 0 : score += 1;
         speedUp();
@@ -199,7 +191,7 @@ class _HomePageState extends ConsumerState<HomePage>
           digbySize == 0.4) {
         gameModeInfinite ? lives = lives : lives -= 1;
         timeOutX = 0.7;
-        velocity = 5;
+        velocity = 6;
         HapticFeedback.mediumImpact();
         gameModeInfinite
             ? barrierX = barrierX
@@ -212,7 +204,7 @@ class _HomePageState extends ConsumerState<HomePage>
         HapticFeedback.lightImpact();
         digbySize = 0.4;
         timeOutX = 0.7;
-        velocity = 5;
+        velocity = 6;
         barrierX = [2, 3.5, 5, 6.5, 8, 9.5];
         return false;
       }
@@ -225,7 +217,7 @@ class _HomePageState extends ConsumerState<HomePage>
       setState(() {
         timeOutX += 2;
         digbySize = 0.8;
-        velocity = 6;
+        velocity = 7;
       });
     }
   }
@@ -236,7 +228,7 @@ class _HomePageState extends ConsumerState<HomePage>
         dietCokeX += 2;
         dietCokeConsumed = true;
         digbySize = 0.2;
-        velocity = 5;
+        velocity = 6;
         lives = 1;
       });
     }
@@ -295,9 +287,8 @@ class _HomePageState extends ConsumerState<HomePage>
             downedDietCoke();
             smashedZingerBox();
             if (Button(
-                      buttonWidth: MediaQuery.of(context).size.width * 0.23,
-                    ).userIsHoldingButtonDown() ==
-                    true &&
+                  buttonWidth: MediaQuery.of(context).size.width * 0.23,
+                ).userIsHoldingButtonDown() &&
                 digbyX + 0.02 < 1) {
               setState(() {
                 digbyX += 0.02;
@@ -320,8 +311,7 @@ class _HomePageState extends ConsumerState<HomePage>
               downedDietCoke();
               smashedZingerBox();
               if (Button(buttonWidth: MediaQuery.of(context).size.width * 0.23)
-                          .userIsHoldingButtonDown() ==
-                      true &&
+                      .userIsHoldingButtonDown() &&
                   digbyX - 0.02 > -1) {
                 setState(() {
                   digbyX -= 0.02;
@@ -347,31 +337,31 @@ class _HomePageState extends ConsumerState<HomePage>
     return RawKeyboardListener(
       focusNode: _focusNode,
       onKey: (event) {
-        if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
+        if (event.logicalKey == LogicalKeyboardKey.arrowRight &&
+            event is RawKeyDownEvent &&
+            (digbyX + 0.02 < 1)) {
           if (gameHasStarted) {
             direction = 'right';
             eatenTimeOut();
             downedDietCoke();
             smashedZingerBox();
-            if (event is RawKeyDownEvent && (digbyX + 0.02 < 1)) {
-              setState(() {
-                digbyX += 0.09;
-                movement = !movement;
-              });
-            }
+            digbyX += 0.1;
+            movement = !movement;
           } else {
             startGame();
           }
-        } else if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
+        } else if (event.logicalKey == LogicalKeyboardKey.arrowLeft &&
+            event is RawKeyDownEvent &&
+            (digbyX - 0.02 > -1)) {
           if (gameHasStarted) {
             direction = 'left';
             eatenTimeOut();
             downedDietCoke();
             smashedZingerBox();
-            if (event is RawKeyDownEvent && (digbyX - 0.02 > -1)) {
-              digbyX -= 0.09;
+            setState(() {
+              digbyX -= 0.1;
               movement = !movement;
-            }
+            });
           } else {
             startGame();
           }
