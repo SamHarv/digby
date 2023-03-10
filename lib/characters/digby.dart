@@ -17,7 +17,6 @@ class Digby extends StatelessWidget {
   Widget build(BuildContext context) {
     if (direction == 'right') {
       return SizedBox(
-        width: MediaQuery.of(context).size.height * size / 2,
         height: MediaQuery.of(context).size.height * size / 2,
         child: movement
             ? Image.asset('images/move.png')
@@ -28,7 +27,6 @@ class Digby extends StatelessWidget {
         alignment: Alignment.center,
         transform: Matrix4.rotationY(pi),
         child: SizedBox(
-          width: MediaQuery.of(context).size.height * size / 2,
           height: MediaQuery.of(context).size.height * size / 2,
           child: movement
               ? Image.asset('images/move.png')

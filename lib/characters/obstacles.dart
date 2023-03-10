@@ -38,7 +38,13 @@ class Obstacle extends ConsumerWidget {
                   : Image.asset('images/goblin2.png'),
             )
           : Container(
-              color: isDarkMode ? Colors.blueGrey : Colors.green,
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(24),
+                  topRight: Radius.circular(24),
+                ),
+                color: isDarkMode ? Colors.blueGrey : Colors.green,
+              ),
               width: MediaQuery.of(context).size.width * barrierWidth / 2,
               height: MediaQuery.of(context).size.height *
                   3 /

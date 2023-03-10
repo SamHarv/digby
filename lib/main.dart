@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+// ignore: depend_on_referenced_packages
+import 'package:flutter_web_plugins/url_strategy.dart';
 
 import './home_page.dart';
 
@@ -10,6 +12,7 @@ Future main() async {
   await Hive.initFlutter();
   await Hive.openBox('highscore');
   await initialization(null);
+  usePathUrlStrategy();
   runApp(const ProviderScope(child: MyApp()));
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.landscapeLeft,
@@ -33,3 +36,6 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+// TODO
+// Publish to PlayStore & AppStore

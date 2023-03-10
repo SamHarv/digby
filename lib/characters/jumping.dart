@@ -16,7 +16,6 @@ class Jumping extends StatelessWidget {
   Widget build(BuildContext context) {
     if (direction == 'right') {
       return SizedBox(
-        width: MediaQuery.of(context).size.height * size / 2,
         height: MediaQuery.of(context).size.height * size / 2,
         child: Image.asset('images/jump.png'),
       );
@@ -25,7 +24,6 @@ class Jumping extends StatelessWidget {
         alignment: Alignment.center,
         transform: Matrix4.rotationY(pi),
         child: SizedBox(
-          width: MediaQuery.of(context).size.height * size / 2,
           height: MediaQuery.of(context).size.height * size / 2,
           child: Image.asset('images/jump.png'),
         ),

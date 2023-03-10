@@ -14,9 +14,9 @@ import './characters/obstacles.dart';
 import './characters/digby.dart';
 import './characters/jumping.dart';
 
-import './treats/zinger_box.dart';
-import './treats/timeout.dart';
-import './treats/diet_coke.dart';
+import './treats/senzu.dart';
+import './treats/creatine.dart';
+import './treats/snake_oil.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -30,13 +30,16 @@ class _HomePageState extends ConsumerState<HomePage>
   static double digbyX = 0;
   static double digbyY = 1;
   double digbySize = 0.4;
-  double timeOutX = 0.5;
-  double timeOutY = 1;
-  double dietCokeX = -0.5;
-  double dietCokeY = 1.06;
-  bool dietCokeConsumed = false;
-  double zingerBoxX = 30;
-  double zingerBoxY = 1;
+  double creatineX = 0.5;
+  double creatineY = 1;
+  double creatineSize = 0.35;
+  double snakeOilX = -0.5;
+  double snakeOilY = 1;
+  double snakeOilSize = 0.35;
+  bool snakeOilConsumed = false;
+  double senzuX = 30;
+  double senzuY = 1;
+  double senzuSize = 0.35;
   double time = 0;
   double height = 0;
   double initialHeight = digbyY;
@@ -81,9 +84,9 @@ class _HomePageState extends ConsumerState<HomePage>
         gameHasStarted = false;
         _showDialogue();
       }
-      gameModeInfinite ? dietCokeX = -3 : dietCokeX = -0.5;
+      gameModeInfinite ? snakeOilX = -3 : snakeOilX = -0.5;
       moveMap();
-      smashedZingerBox();
+      hadSenzu();
       goblinMove = !goblinMove;
       time += 0.05;
     });
@@ -93,13 +96,13 @@ class _HomePageState extends ConsumerState<HomePage>
     for (int i = 0; i < barrierX.length; i++) {
       setState(() {
         barrierX[i] -= gameSpeed;
-        zingerBoxX -= 0.002;
+        senzuX -= 0.002;
       });
       if (barrierX[i] < -1.5) {
         barrierX[i] += 9;
       }
-      if (zingerBoxX < -1.5 && zingerBoxX > -2) {
-        zingerBoxX += 9;
+      if (senzuX < -1.5 && senzuX > -2) {
+        senzuX += 9;
       }
       if (barrierX[i] < digbyX && barrierX[i] > digbyX - 0.1) {
         gameModeInfinite ? score = 0 : score += 1;
@@ -119,10 +122,10 @@ class _HomePageState extends ConsumerState<HomePage>
       gameHasStarted = false;
       time = 0;
       digbyY = 1;
-      timeOutX = 0.5;
-      dietCokeX = -0.5;
-      dietCokeConsumed = false;
-      zingerBoxX = 30;
+      creatineX = 0.5;
+      snakeOilX = -0.5;
+      snakeOilConsumed = false;
+      senzuX = 30;
       direction = 'right';
       digbySize = 0.4;
       barrierX = [2, 3.5, 5, 6.5, 8, 9.5];
@@ -183,14 +186,14 @@ class _HomePageState extends ConsumerState<HomePage>
           (digbySize == 0.4 || digbySize == 0.2) &&
           lives == 1 &&
           !gameModeInfinite) {
-        HapticFeedback.heavyImpact();
+        HapticFeedback.vibrate();
         return true;
       } else if (barrierX[i] <= digbyX + 0.02 &&
           barrierX[i] + barrierWidth >= digbyX - 0.02 &&
           digbyY >= 1 - barrierHeight[i] &&
           digbySize == 0.4) {
         gameModeInfinite ? lives = lives : lives -= 1;
-        timeOutX = 0.7;
+        creatineX = 0.7;
         velocity = 6;
         HapticFeedback.mediumImpact();
         gameModeInfinite
@@ -203,7 +206,7 @@ class _HomePageState extends ConsumerState<HomePage>
           digbySize == 0.8) {
         HapticFeedback.lightImpact();
         digbySize = 0.4;
-        timeOutX = 0.7;
+        creatineX = 0.7;
         velocity = 6;
         barrierX = [2, 3.5, 5, 6.5, 8, 9.5];
         return false;
@@ -212,21 +215,21 @@ class _HomePageState extends ConsumerState<HomePage>
     return false;
   }
 
-  void eatenTimeOut() {
-    if ((digbyX - timeOutX).abs() < 0.1 && (digbyY - timeOutY).abs() < 0.05) {
+  void hadCreatine() {
+    if ((digbyX - creatineX).abs() < 0.1 && (digbyY - creatineY).abs() < 0.05) {
       setState(() {
-        timeOutX += 2;
+        creatineX += 2;
         digbySize = 0.8;
         velocity = 7;
       });
     }
   }
 
-  void downedDietCoke() {
-    if ((digbyX - dietCokeX).abs() < 0.1 && (digbyY - dietCokeY).abs() < 0.07) {
+  void snakeOiled() {
+    if ((digbyX - snakeOilX).abs() < 0.1 && (digbyY - snakeOilY).abs() < 0.07) {
       setState(() {
-        dietCokeX += 2;
-        dietCokeConsumed = true;
+        snakeOilX += 2;
+        snakeOilConsumed = true;
         digbySize = 0.2;
         velocity = 6;
         lives = 1;
@@ -234,13 +237,12 @@ class _HomePageState extends ConsumerState<HomePage>
     }
   }
 
-  void smashedZingerBox() {
-    if ((digbyX - zingerBoxX).abs() < 0.1 &&
-        (digbyY - zingerBoxY).abs() < 0.07) {
+  void hadSenzu() {
+    if ((digbyX - senzuX).abs() < 0.1 && (digbyY - senzuY).abs() < 0.07) {
       setState(() {
-        zingerBoxX += -3;
+        senzuX += -3;
         digbySize = 0.8;
-        timeOutX += 2;
+        creatineX += 2;
         velocity = 6;
         lives = 3;
         gameSpeed = 0.02;
@@ -283,9 +285,9 @@ class _HomePageState extends ConsumerState<HomePage>
     direction = 'right';
     gameHasStarted
         ? Timer.periodic(const Duration(milliseconds: 20), (timer) {
-            eatenTimeOut();
-            downedDietCoke();
-            smashedZingerBox();
+            hadCreatine();
+            snakeOiled();
+            hadSenzu();
             if (Button(
                   buttonWidth: MediaQuery.of(context).size.width * 0.23,
                 ).userIsHoldingButtonDown() &&
@@ -307,9 +309,9 @@ class _HomePageState extends ConsumerState<HomePage>
         ? Timer.periodic(
             const Duration(milliseconds: 20),
             (timer) {
-              eatenTimeOut();
-              downedDietCoke();
-              smashedZingerBox();
+              hadCreatine();
+              snakeOiled();
+              hadSenzu();
               if (Button(buttonWidth: MediaQuery.of(context).size.width * 0.23)
                       .userIsHoldingButtonDown() &&
                   digbyX - 0.02 > -1) {
@@ -342,9 +344,9 @@ class _HomePageState extends ConsumerState<HomePage>
             (digbyX + 0.02 < 1)) {
           if (gameHasStarted) {
             direction = 'right';
-            eatenTimeOut();
-            downedDietCoke();
-            smashedZingerBox();
+            hadCreatine();
+            snakeOiled();
+            hadSenzu();
             digbyX += 0.1;
             movement = !movement;
           } else {
@@ -355,9 +357,9 @@ class _HomePageState extends ConsumerState<HomePage>
             (digbyX - 0.02 > -1)) {
           if (gameHasStarted) {
             direction = 'left';
-            eatenTimeOut();
-            downedDietCoke();
-            smashedZingerBox();
+            hadCreatine();
+            snakeOiled();
+            hadSenzu();
             setState(() {
               digbyX -= 0.1;
               movement = !movement;
@@ -469,11 +471,13 @@ class _HomePageState extends ConsumerState<HomePage>
                     goblinMove: goblinMove,
                     isGoblin: isGoblin[5],
                   ),
-                  TimeOutBar(timeOutX: timeOutX),
+                  Creatine(creatineX: creatineX, size: creatineSize),
                   isInfiniteMode
-                      ? const DietCoke(dietCokeX: -3)
-                      : DietCoke(dietCokeX: dietCokeConsumed ? 1.5 : -0.5),
-                  ZingerBox(zingerBoxX: zingerBoxX),
+                      ? SnakeOil(snakeOilX: -3, size: snakeOilSize)
+                      : SnakeOil(
+                          snakeOilX: snakeOilConsumed ? 1.5 : -0.5,
+                          size: snakeOilSize),
+                  Senzu(senzuX: senzuX, size: senzuSize),
                   Padding(
                     padding: const EdgeInsets.all(16),
                     child: Row(
