@@ -2,7 +2,7 @@
     package="com.example.digby">
    <uses-permission android:name="android.permission.VIBRATE" />
    <application
-        android:label="digby"
+        android:label="Digby"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
@@ -30,6 +30,7 @@
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
             android:name="flutterEmbedding"
-            android:value="2" />
+            android:value="2"/>
+
     </application>
 </manifest>

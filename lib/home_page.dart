@@ -1,22 +1,23 @@
 import 'dart:async';
-import 'package:digby/data/db.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-import './providers.dart';
+import '/data/db.dart';
 
-import './widgets/app_drawer.dart';
-import './widgets/button.dart';
+import '/providers.dart';
 
-import './characters/obstacles.dart';
-import './characters/digby.dart';
-import './characters/jumping.dart';
+import '/widgets/app_drawer.dart';
+import '/widgets/button.dart';
 
-import './treats/senzu.dart';
-import './treats/creatine.dart';
-import './treats/snake_oil.dart';
+import '/characters/obstacles.dart';
+import '/characters/digby.dart';
+import '/characters/jumping.dart';
+
+import '/treats/senzu.dart';
+import '/treats/creatine.dart';
+import '/treats/snake_oil.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -137,45 +138,46 @@ class _HomePageState extends ConsumerState<HomePage>
 
   void _showDialogue() {
     showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (BuildContext context) {
-          if (score > db.highScore) {
-            db.highScore = score;
-            db.updateData();
-          } else {
-            db.highScore = db.highScore;
-          }
-          return AlertDialog(
-            backgroundColor: Colors.blueGrey,
-            title: const Center(
-              child: Text(
-                'G A M E  O V E R\n\n'
-                'What have you done?\n\n'
-                'He\'s dead.',
-                style: TextStyle(
-                  color: Colors.white,
-                ),
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        if (score > db.highScore) {
+          db.highScore = score;
+          db.updateData();
+        } else {
+          db.highScore = db.highScore;
+        }
+        return AlertDialog(
+          backgroundColor: Colors.blueGrey,
+          title: const Center(
+            child: Text(
+              'G A M E  O V E R\n\n'
+              'What have you done?\n\n'
+              'He\'s dead.',
+              style: TextStyle(
+                color: Colors.white,
               ),
             ),
-            actions: [
-              GestureDetector(
-                onTap: resetGame,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(5),
-                  child: Container(
-                    padding: const EdgeInsets.all(7),
-                    color: Colors.white,
-                    child: const Text(
-                      'PLAY AGAIN',
-                      style: TextStyle(color: Colors.blueGrey),
-                    ),
+          ),
+          actions: [
+            GestureDetector(
+              onTap: resetGame,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(5),
+                child: Container(
+                  padding: const EdgeInsets.all(7),
+                  color: Colors.white,
+                  child: const Text(
+                    'PLAY AGAIN',
+                    style: TextStyle(color: Colors.blueGrey),
                   ),
                 ),
               ),
-            ],
-          );
-        });
+            ),
+          ],
+        );
+      },
+    );
   }
 
   bool digbyIsDead() {
@@ -246,6 +248,7 @@ class _HomePageState extends ConsumerState<HomePage>
         velocity = 6;
         lives = 3;
         gameSpeed = 0.02;
+        snakeOilConsumed = false;
       });
     }
   }
