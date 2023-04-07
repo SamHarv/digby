@@ -223,6 +223,7 @@ class _HomePageState extends ConsumerState<HomePage>
         creatineX += 2;
         digbySize = 0.8;
         velocity = 7;
+        snakeOilConsumed = false;
       });
     }
   }
@@ -245,7 +246,7 @@ class _HomePageState extends ConsumerState<HomePage>
         senzuX += -3;
         digbySize = 0.8;
         creatineX += 2;
-        velocity = 6;
+        velocity = 7;
         lives = 3;
         gameSpeed = 0.02;
         snakeOilConsumed = false;
