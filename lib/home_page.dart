@@ -28,7 +28,7 @@ class HomePage extends ConsumerStatefulWidget {
 
 class _HomePageState extends ConsumerState<HomePage>
     with SingleTickerProviderStateMixin {
-  static double digbyX = 0;
+  double digbyX = 0;
   static double digbyY = 1;
   double digbySize = 0.4;
   double creatineX = 0.5;
@@ -219,38 +219,32 @@ class _HomePageState extends ConsumerState<HomePage>
 
   void hadCreatine() {
     if ((digbyX - creatineX).abs() < 0.1 && (digbyY - creatineY).abs() < 0.05) {
-      setState(() {
-        creatineX += 2;
-        digbySize = 0.8;
-        velocity = 7;
-        snakeOilConsumed = false;
-      });
+      creatineX += 2;
+      digbySize = 0.8;
+      velocity = 7;
+      snakeOilConsumed = false;
     }
   }
 
   void snakeOiled() {
     if ((digbyX - snakeOilX).abs() < 0.1 && (digbyY - snakeOilY).abs() < 0.07) {
-      setState(() {
-        snakeOilX += 2;
-        snakeOilConsumed = true;
-        digbySize = 0.2;
-        velocity = 6;
-        lives = 1;
-      });
+      snakeOilX += 2;
+      snakeOilConsumed = true;
+      digbySize = 0.2;
+      velocity = 6;
+      lives = 1;
     }
   }
 
   void hadSenzu() {
     if ((digbyX - senzuX).abs() < 0.1 && (digbyY - senzuY).abs() < 0.07) {
-      setState(() {
-        senzuX += -3;
-        digbySize = 0.8;
-        creatineX += 2;
-        velocity = 7;
-        lives = 3;
-        gameSpeed = 0.02;
-        snakeOilConsumed = false;
-      });
+      senzuX += -3;
+      digbySize = 0.8;
+      creatineX += 2;
+      velocity = 7;
+      lives = 3;
+      gameSpeed = 0.02;
+      snakeOilConsumed = false;
     }
   }
 
@@ -269,14 +263,10 @@ class _HomePageState extends ConsumerState<HomePage>
           height = gravity * time * time + velocity * time;
           if (initialHeight - height > 1) {
             midJump = false;
-            setState(() {
-              digbyY = 1;
-            });
+            digbyY = 1;
             timer.cancel();
           } else {
-            setState(() {
-              digbyY = initialHeight - height;
-            });
+            digbyY = initialHeight - height;
           }
         });
       }
@@ -296,10 +286,8 @@ class _HomePageState extends ConsumerState<HomePage>
                   buttonWidth: MediaQuery.of(context).size.width * 0.23,
                 ).userIsHoldingButtonDown() &&
                 digbyX + 0.02 < 1) {
-              setState(() {
-                digbyX += 0.02;
-                movement = !movement;
-              });
+              digbyX += 0.02;
+              movement = !movement;
             } else {
               timer.cancel();
             }
@@ -319,10 +307,8 @@ class _HomePageState extends ConsumerState<HomePage>
               if (Button(buttonWidth: MediaQuery.of(context).size.width * 0.23)
                       .userIsHoldingButtonDown() &&
                   digbyX - 0.02 > -1) {
-                setState(() {
-                  digbyX -= 0.02;
-                  movement = !movement;
-                });
+                digbyX -= 0.02;
+                movement = !movement;
               } else {
                 timer.cancel();
               }
