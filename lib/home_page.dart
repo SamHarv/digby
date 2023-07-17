@@ -392,7 +392,7 @@ class _HomePageState extends ConsumerState<HomePage>
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(8),
                     alignment: Alignment.topLeft,
                     child: IconButton(
                       onPressed: () {
