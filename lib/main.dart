@@ -4,38 +4,29 @@ import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_web_plugins/url_strategy.dart';
-
-import './home_page.dart';
+import 'pages/game_display.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   await Hive.openBox('highscore');
-  await initialization(null);
   usePathUrlStrategy();
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(const ProviderScope(child: Digby()));
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.landscapeLeft,
     DeviceOrientation.landscapeRight,
-  ]);
+  ]); // Force landscape orientation
 }
 
-Future initialization(BuildContext? context) async {
-  await Future.delayed(const Duration(seconds: 3));
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class Digby extends StatelessWidget {
+  const Digby({super.key});
 
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Digby',
-      home: HomePage(),
+      home: GameDisplay(),
     );
   }
 }
-
-// TODO
-// Publish to PlayStore & AppStore

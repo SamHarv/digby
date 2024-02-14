@@ -14,18 +14,20 @@ class Jumping extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final mediaHeight = MediaQuery.of(context).size.height;
+    final jumpingDigby = Image.asset('images/jump.png');
     if (direction == 'right') {
       return SizedBox(
-        height: MediaQuery.of(context).size.height * size / 2,
-        child: Image.asset('images/jump.png'),
+        height: mediaHeight * size,
+        child: jumpingDigby,
       );
     } else {
       return Transform(
         alignment: Alignment.center,
         transform: Matrix4.rotationY(pi),
         child: SizedBox(
-          height: MediaQuery.of(context).size.height * size / 2,
-          child: Image.asset('images/jump.png'),
+          height: mediaHeight * size,
+          child: jumpingDigby,
         ),
       );
     }
