@@ -7,19 +7,24 @@ import 'package:flutter/services.dart';
 import '../characters/obstacle.dart';
 
 class GamePlayLogic {
+  // final Ref _ref;
+
   int lives = 3;
   double time = 0;
   bool gameHasStarted = false;
   int score = 0;
-  double gameSpeed = 0.02;
-  double pauseGameSpeed = 0.02;
+  double gameSpeed = 0.01;
+  late double pauseGameSpeed; // keeps defaulting to hardcoded value
   bool paused = false;
-  bool gameModeInfinite = false;
   bool digbyDied = false;
+  bool restarted = false;
+
   PowerUpsLogic powerUpsLogic = PowerUpsLogic();
   GameDisplay gameDisplay = const GameDisplay();
   ObstacleLogic obstacleLogic = ObstacleLogic();
   DigbyLogic digbyLogic = DigbyLogic();
+
+  // GamePlayLogic(this._ref);
 
   bool digbyIsDead() {
     if (lives == 0) {
@@ -32,18 +37,15 @@ class GamePlayLogic {
   }
 
   void digbyJump() {
-    digbyLogic.jump(time);
-    checkPowerUps();
+    digbyLogic.jump();
   }
 
   void digbyMoveRight() {
     digbyLogic.moveRight();
-    checkPowerUps();
   }
 
   void digbyMoveLeft() {
     digbyLogic.moveLeft();
-    checkPowerUps();
   }
 
   void moveMap() {
@@ -63,11 +65,22 @@ class GamePlayLogic {
     }
   }
 
-  void startGame() {
+  void startGame(gameModeInfinite) {
     if (gameHasStarted) {
       moveMap();
-      collisionDetection();
-      time += 0.05;
+      if (!gameModeInfinite) {
+        collisionDetection();
+        checkPowerUps();
+      }
+    }
+  }
+
+  void checkHighScore(db) {
+    if (score > db.highScore) {
+      db.highScore = score;
+      db.updateData();
+    } else {
+      db.highScore = db.highScore;
     }
   }
 
@@ -93,20 +106,14 @@ class GamePlayLogic {
 
   void collisionDetection() {
     for (int i = 0; i < obstacleLogic.obstacleX.length; i++) {
-      if (obstacleCollision() &&
-          digbyLogic.digbySize <= 0.2 &&
-          lives == 1 &&
-          !gameModeInfinite) {
+      if (obstacleCollision() && digbyLogic.digbySize <= 0.2 && lives == 1) {
         HapticFeedback.vibrate();
         decrementLives();
         digbyIsDead();
       } else if (obstacleCollision() && digbyLogic.digbySize == 0.2) {
-        gameModeInfinite ? lives = lives : decrementLives();
-        powerUpsLogic.creatineX = 0.7;
+        decrementLives();
         HapticFeedback.mediumImpact();
-        gameModeInfinite
-            ? obstacleLogic.obstacleX = obstacleLogic.obstacleX
-            : obstacleLogic.obstacleX = [2, 3.5, 5, 6.5, 8, 9.5];
+        obstacleLogic.obstacleX = [2, 3.5, 5, 6.5, 8, 9.5];
         digbyIsDead();
       } else if (obstacleCollision() && digbyLogic.digbySize == 0.4) {
         HapticFeedback.lightImpact();
@@ -115,47 +122,49 @@ class GamePlayLogic {
         obstacleLogic.obstacleX = [2, 3.5, 5, 6.5, 8, 9.5];
         digbyIsDead();
       }
-      scoreIncrement();
     }
   }
 
   void speedUp() {
-    gameSpeed += 0.0001;
+    gameSpeed += 0.00004;
   }
 
   void resetGame() {
     digbyLogic.digbyX = 0;
     gameHasStarted = false;
-    time = 0;
     digbyLogic.digbyY = 1;
     powerUpsLogic.creatineX = 0.5;
     powerUpsLogic.snakeOilX = -0.5;
-    powerUpsLogic.senzuX = 30;
+    powerUpsLogic.senzuX = 60;
     digbyLogic.direction = 'right';
     digbyLogic.standardSizeDigby();
     obstacleLogic.obstacleX = [2, 3.5, 5, 6.5, 8, 9.5];
     replenishLives();
     digbyDied = false;
-    gameSpeed = 0.02;
+    gameSpeed = 0.01;
+    pauseGameSpeed = 0.01;
     score = 0;
   }
 
-  void saveGameSpeed(gameSpeed) {
-    pauseGameSpeed = gameSpeed;
+  void saveGameSpeed() {
+    if (paused) pauseGameSpeed = gameSpeed;
   }
 
-  void pauseGame(gameSpeed) {
-    saveGameSpeed(gameSpeed);
+  void pauseGame() {
     paused = true;
+    saveGameSpeed();
     gameHasStarted = false;
-    time = 0;
     gameSpeed = 0;
   }
 
-  void resumeGame(pauseGameSpeed) {
+  void loadGameSpeed() {
+    if (!paused) gameSpeed = pauseGameSpeed;
+  }
+
+  void resumeGame() {
     paused = false;
     gameHasStarted = true;
-    gameSpeed = pauseGameSpeed;
+    loadGameSpeed();
   }
 
   void hadCreatine() {
@@ -164,12 +173,6 @@ class GamePlayLogic {
       powerUpsLogic.hadCreatine();
       digbyLogic.plusSizeDiby();
     }
-  }
-
-  void placeSnakeOil() {
-    gameModeInfinite
-        ? powerUpsLogic.snakeOilX = -3
-        : powerUpsLogic.snakeOilX = -0.5;
   }
 
   void snakeOiled() {
@@ -187,7 +190,7 @@ class GamePlayLogic {
       powerUpsLogic.hadSenzu();
       digbyLogic.plusSizeDiby();
       replenishLives();
-      gameSpeed = 0.02;
+      gameSpeed = 0.01;
     }
   }
 

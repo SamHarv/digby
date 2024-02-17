@@ -4,8 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers.dart';
 
 class ActionButton extends ConsumerWidget {
-  final Icon? actionIcon;
-  final Function? action;
+  final IconData? actionIcon;
+  final dynamic action;
   static bool isHoldingButton = false;
   final double buttonWidth;
 
@@ -27,7 +27,7 @@ class ActionButton extends ConsumerWidget {
     return GestureDetector(
       onTapDown: (tapDownDetails) {
         isHoldingButton = true;
-        action!();
+        action();
       },
       onTapUp: (tapUpDetails) {
         isHoldingButton = false;
@@ -35,13 +35,17 @@ class ActionButton extends ConsumerWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
         child: Container(
-          width: buttonWidth,
+          width: mediaWidth * buttonWidth,
           height:
               mediaWidth > mediaHeight ? mediaWidth * 0.07 : mediaWidth * 0.27,
           padding: const EdgeInsets.all(10),
           color:
               ref.watch(isDarkMode) ? Colors.blueGrey[300] : Colors.green[300],
-          child: actionIcon,
+          child: Icon(
+            actionIcon,
+            size: 40,
+            color: Colors.white,
+          ),
         ),
       ),
     );

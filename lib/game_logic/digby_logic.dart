@@ -15,7 +15,7 @@ class DigbyLogic {
 
   void plusSizeDiby() {
     digbySize = 0.4;
-    velocity = 7;
+    velocity = 8; // was 7
   }
 
   void microDigby() {
@@ -28,13 +28,13 @@ class DigbyLogic {
     velocity = 6;
   }
 
-  void jump(double time) {
+  void jump() {
     double initialHeight = digbyY;
     if (midJump == false) {
       midJump = true;
-      time = 0;
-      Timer.periodic(const Duration(milliseconds: 35), (timer) {
-        time += 0.05;
+      double time = 0;
+      Timer.periodic(const Duration(milliseconds: 20), (timer) {
+        time += 0.04; // higher number increases speed of jump
         jumpHeight = gravity * time * time + velocity * time;
         if (initialHeight - jumpHeight > 1) {
           midJump = false;
@@ -53,8 +53,8 @@ class DigbyLogic {
       const Duration(milliseconds: 20),
       (timer) {
         if (const ActionButton(buttonWidth: 0).isHoldingButtonDown() &&
-            digbyX + 0.02 < 1) {
-          digbyX += 0.02;
+            digbyX + 0.04 < 1) {
+          digbyX += 0.04;
           movement = !movement;
         } else {
           timer.cancel();
@@ -69,8 +69,8 @@ class DigbyLogic {
       const Duration(milliseconds: 20),
       (timer) {
         if (const ActionButton(buttonWidth: 0).isHoldingButtonDown() &&
-            digbyX - 0.02 > -1) {
-          digbyX -= 0.02;
+            digbyX - 0.04 > -1) {
+          digbyX -= 0.04;
           movement = !movement;
         } else {
           timer.cancel();

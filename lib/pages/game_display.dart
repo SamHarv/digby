@@ -1,26 +1,23 @@
 import 'dart:async';
 
-import 'package:digby/game_logic/game_play_logic.dart';
+import 'package:digby/custom_widgets/life_icon.dart';
+import 'package:digby/custom_widgets/score_display.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import '/game_logic/game_play_logic.dart';
 import '/data/db.dart';
-
 import '/providers.dart';
-
-import '../custom_widgets/app_drawer_menu.dart';
-import '../custom_widgets/action_button.dart';
-
-import '../characters/obstacle.dart';
+import '/custom_widgets/app_drawer_menu.dart';
+import '/custom_widgets/action_button.dart';
+import '/characters/obstacle.dart';
 import '/characters/digby.dart';
 import '/characters/jumping.dart';
-
-import '../power_ups/senzu.dart';
-import '../power_ups/creatine.dart';
-import '../power_ups/snake_oil.dart';
+import '/power_ups/senzu.dart';
+import '/power_ups/creatine.dart';
+import '/power_ups/snake_oil.dart';
 
 class GameDisplay extends ConsumerStatefulWidget {
   const GameDisplay({super.key});
@@ -31,39 +28,12 @@ class GameDisplay extends ConsumerStatefulWidget {
 
 class _GameDisplayState extends ConsumerState<GameDisplay>
     with SingleTickerProviderStateMixin {
-  var gameFont = GoogleFonts.pressStart2p(
-    textStyle: const TextStyle(
-      color: Colors.white,
-      fontSize: 16,
-    ),
-  );
   Color backgroundColour = Colors.black;
   bool gameModeInfinite = false;
   final highScoreBox = Hive.box('highscore');
   HighScore db = HighScore();
   GamePlayLogic gamePlayLogic = GamePlayLogic();
   late FocusNode _focusNode;
-
-  void goblinMotion() {
-    ref.read(goblinMotionState.notifier).state =
-        !ref.read(goblinMotionState.notifier).state;
-  }
-
-  void startGame() {
-    gamePlayLogic.gameHasStarted = true;
-    Timer.periodic(const Duration(milliseconds: 50), (timer) {
-      if (gamePlayLogic.digbyDied) {
-        timer.cancel();
-        showDialogue();
-        gamePlayLogic.digbyDied = false;
-      } else {
-        setState(() {
-          goblinMotion();
-          gamePlayLogic.startGame();
-        });
-      }
-    });
-  }
 
   @override
   void initState() {
@@ -73,24 +43,38 @@ class _GameDisplayState extends ConsumerState<GameDisplay>
     super.initState();
   }
 
+  void goblinMotion() {
+    ref.read(goblinMotionState.notifier).state =
+        !ref.read(goblinMotionState.notifier).state;
+  }
+
+  void startGame() {
+    gamePlayLogic.gameHasStarted = true;
+    Timer.periodic(const Duration(milliseconds: 20), (timer) {
+      if (gamePlayLogic.digbyDied) {
+        timer.cancel();
+        showDialogue();
+        gamePlayLogic.digbyDied = false;
+      } else {
+        setState(() {
+          goblinMotion();
+          gamePlayLogic.startGame(gameModeInfinite);
+        });
+      }
+    });
+  }
+
   void showDialogue() {
     showDialog(
       barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
-        if (gamePlayLogic.score > db.highScore) {
-          db.highScore = gamePlayLogic.score;
-          db.updateData();
-        } else {
-          db.highScore = db.highScore;
-        }
+        gamePlayLogic.checkHighScore(db);
         return AlertDialog(
           backgroundColor: Colors.blueGrey,
           title: const Center(
             child: Text(
-              'G A M E  O V E R\n\n'
-              'What have you done?\n\n'
-              'He\'s dead.',
+              'G A M E  O V E R\n\nWhat have you done?\n\nHe\'s dead.',
               style: TextStyle(
                 color: Colors.white,
               ),
@@ -128,14 +112,12 @@ class _GameDisplayState extends ConsumerState<GameDisplay>
 
   @override
   Widget build(BuildContext context) {
-    ref.watch(isInfiniteMode)
-        ? gameModeInfinite = true
-        : gameModeInfinite = false;
+    gameModeInfinite = ref.watch(isInfiniteMode);
     backgroundColour = ref.watch(isDarkMode) ? Colors.black : Colors.blue;
-
     return RawKeyboardListener(
       focusNode: _focusNode,
       onKey: (event) {
+        // Respond to right arrow on keyboard
         if (event.logicalKey == LogicalKeyboardKey.arrowRight &&
             event is RawKeyDownEvent &&
             (gamePlayLogic.digbyLogic.digbyX + 0.02 < 1)) {
@@ -145,11 +127,12 @@ class _GameDisplayState extends ConsumerState<GameDisplay>
               gamePlayLogic.digbyLogic.digbyX += 0.1;
               gamePlayLogic.digbyLogic.movement =
                   !gamePlayLogic.digbyLogic.movement;
-              gamePlayLogic.checkPowerUps();
+              if (!gameModeInfinite) gamePlayLogic.checkPowerUps();
             });
           } else {
             startGame();
           }
+          // Respond to left arrow on keyboard
         } else if (event.logicalKey == LogicalKeyboardKey.arrowLeft &&
             event is RawKeyDownEvent &&
             (gamePlayLogic.digbyLogic.digbyX - 0.02 > -1)) {
@@ -159,11 +142,12 @@ class _GameDisplayState extends ConsumerState<GameDisplay>
               gamePlayLogic.digbyLogic.digbyX -= 0.1;
               gamePlayLogic.digbyLogic.movement =
                   !gamePlayLogic.digbyLogic.movement;
-              gamePlayLogic.checkPowerUps();
+              if (!gameModeInfinite) gamePlayLogic.checkPowerUps();
             });
           } else {
             startGame();
           }
+          // Respond to spacebar or up arrow on keyboard
         } else if (event is RawKeyDownEvent &&
             (event.logicalKey == LogicalKeyboardKey.space ||
                 event.logicalKey == LogicalKeyboardKey.arrowUp)) {
@@ -173,14 +157,7 @@ class _GameDisplayState extends ConsumerState<GameDisplay>
         }
       },
       child: Scaffold(
-        drawer: const AppDrawerMenu(),
-        onDrawerChanged: (isClosed) {
-          if (isClosed) {
-            setState(() {
-              gamePlayLogic.resumeGame(gamePlayLogic.pauseGameSpeed);
-            });
-          }
-        },
+        drawer: AppDrawerMenu(gamePlayLogic: gamePlayLogic, ref: ref),
         key: _scaffoldKey,
         body: Column(
           children: [
@@ -192,7 +169,7 @@ class _GameDisplayState extends ConsumerState<GameDisplay>
                     color: backgroundColour,
                     child: Center(
                       child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 120),
+                        duration: const Duration(milliseconds: 100),
                         alignment: Alignment(gamePlayLogic.digbyLogic.digbyX,
                             gamePlayLogic.digbyLogic.digbyY),
                         child: gamePlayLogic.digbyLogic.midJump
@@ -209,13 +186,13 @@ class _GameDisplayState extends ConsumerState<GameDisplay>
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(4),
                     alignment: Alignment.topLeft,
                     child: IconButton(
                       onPressed: () {
                         setState(() {
+                          gamePlayLogic.pauseGame();
                           _scaffoldKey.currentState?.openDrawer();
-                          gamePlayLogic.pauseGame(gamePlayLogic.gameSpeed);
                         });
                       },
                       icon: const Icon(
@@ -247,13 +224,17 @@ class _GameDisplayState extends ConsumerState<GameDisplay>
                       isGoblin: gamePlayLogic.obstacleLogic.isGoblin[i],
                     ),
                   Creatine(
-                      creatineXPosition: gamePlayLogic.powerUpsLogic.creatineX),
-                  ref.watch(isInfiniteMode)
-                      ? const SnakeOil(snakeOilXPosition: -3)
-                      : SnakeOil(
-                          snakeOilXPosition:
-                              gamePlayLogic.powerUpsLogic.snakeOilX),
-                  Senzu(senzuXPosition: gamePlayLogic.powerUpsLogic.senzuX),
+                      creatineXPosition: gameModeInfinite
+                          ? -3
+                          : gamePlayLogic.powerUpsLogic.creatineX),
+                  SnakeOil(
+                      snakeOilXPosition: gameModeInfinite
+                          ? -3
+                          : gamePlayLogic.powerUpsLogic.snakeOilX),
+                  Senzu(
+                      senzuXPosition: gameModeInfinite
+                          ? -3
+                          : gamePlayLogic.powerUpsLogic.senzuX),
                   Padding(
                     padding: const EdgeInsets.all(16),
                     child: Row(
@@ -268,70 +249,24 @@ class _GameDisplayState extends ConsumerState<GameDisplay>
                             const SizedBox(height: 10),
                             Row(
                               children: [
-                                Icon(
-                                  gamePlayLogic.lives >= 1
-                                      ? Icons.favorite
-                                      : Icons.favorite_border,
-                                  color: gamePlayLogic.lives >= 1
-                                      ? Colors.red
-                                      : Colors.white,
-                                  size: 36,
-                                ),
-                                Icon(
-                                  gamePlayLogic.lives >= 2
-                                      ? Icons.favorite
-                                      : Icons.favorite_border,
-                                  color: gamePlayLogic.lives >= 2
-                                      ? Colors.red
-                                      : Colors.white,
-                                  size: 36,
-                                ),
-                                Icon(
-                                  gamePlayLogic.lives >= 3
-                                      ? Icons.favorite
-                                      : Icons.favorite_border,
-                                  color: gamePlayLogic.lives >= 3
-                                      ? Colors.red
-                                      : Colors.white,
-                                  size: 36,
-                                ),
+                                for (int i = 0; i < 3; i++)
+                                  LifeIcon(
+                                      lives: gamePlayLogic.lives, lifeIndex: i),
                               ],
                             ),
                           ],
                         ),
-                        Column(
-                          children: [
-                            Text(
-                              'SCORE',
-                              style: gameFont,
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              ref.watch(isInfiniteMode)
-                                  ? '0'
-                                  : '${gamePlayLogic.score}',
-                              style: ref.watch(isInfiniteMode)
-                                  ? const TextStyle(
-                                      color: Colors.red,
-                                      fontSize: 20,
-                                      fontFamily: 'Press Start 2P',
-                                    )
-                                  : gameFont,
-                            )
-                          ],
+                        ScoreDisplay(
+                          title: 'SCORE',
+                          isInfiniteMode: ref.watch(isInfiniteMode),
+                          score: ref.watch(isInfiniteMode)
+                              ? '0'
+                              : '${gamePlayLogic.score}',
                         ),
-                        Column(
-                          children: [
-                            Text(
-                              'HIGH SCORE',
-                              style: gameFont,
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              '${db.highScore}',
-                              style: gameFont,
-                            )
-                          ],
+                        ScoreDisplay(
+                          title: 'HIGH SCORE',
+                          isInfiniteMode: ref.watch(isInfiniteMode),
+                          score: '${db.highScore}',
                         ),
                       ],
                     ),
@@ -349,34 +284,22 @@ class _GameDisplayState extends ConsumerState<GameDisplay>
                       action: gamePlayLogic.gameHasStarted
                           ? gamePlayLogic.digbyMoveLeft
                           : startGame,
-                      buttonWidth: MediaQuery.of(context).size.width * 0.23,
-                      actionIcon: const Icon(
-                        Icons.arrow_back,
-                        size: 40,
-                        color: Colors.white,
-                      ),
+                      buttonWidth: 0.23,
+                      actionIcon: Icons.arrow_back,
                     ),
                     ActionButton(
                       action: gamePlayLogic.gameHasStarted
                           ? gamePlayLogic.digbyMoveRight
                           : startGame,
-                      buttonWidth: MediaQuery.of(context).size.width * 0.23,
-                      actionIcon: const Icon(
-                        Icons.arrow_forward,
-                        size: 40,
-                        color: Colors.white,
-                      ),
+                      buttonWidth: 0.23,
+                      actionIcon: Icons.arrow_forward,
                     ),
                     ActionButton(
                       action: gamePlayLogic.gameHasStarted
                           ? gamePlayLogic.digbyJump
                           : startGame,
-                      buttonWidth: MediaQuery.of(context).size.width * 0.48,
-                      actionIcon: const Icon(
-                        Icons.arrow_upward,
-                        size: 40,
-                        color: Colors.white,
-                      ),
+                      buttonWidth: 0.48,
+                      actionIcon: Icons.arrow_upward,
                     ),
                   ],
                 ),

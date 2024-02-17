@@ -1,4 +1,5 @@
 import 'package:digby/custom_widgets/menu_list_tile.dart';
+import 'package:digby/game_logic/game_play_logic.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -6,7 +7,13 @@ import 'package:url_launcher/url_launcher.dart';
 import '/providers.dart';
 
 class AppDrawerMenu extends ConsumerWidget {
-  const AppDrawerMenu({super.key});
+  final GamePlayLogic gamePlayLogic;
+  final WidgetRef ref;
+  const AppDrawerMenu({
+    super.key,
+    required this.gamePlayLogic,
+    required this.ref,
+  });
 
   void _sendEmail() {
     final Uri emailLaunchUri = Uri(
@@ -19,15 +26,26 @@ class AppDrawerMenu extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Drawer(
+      width: MediaQuery.of(context).size.width,
       backgroundColor: Colors.white,
       child: SingleChildScrollView(
         child: Column(
           children: [
             Container(
+              height: 200,
               width: double.infinity,
               padding: const EdgeInsets.all(30),
               color: Colors.white,
               child: Image.asset('images/2.png'),
+            ),
+            const Divider(),
+            MenuListTile(
+              menuItemTitle: 'Resume Game',
+              menuItemIcon: Icons.play_arrow,
+              onMenuItemTap: () {
+                gamePlayLogic.resumeGame();
+                Navigator.pop(context);
+              },
             ),
             const Divider(),
             ref.watch(isInfiniteMode)
@@ -57,6 +75,15 @@ class AppDrawerMenu extends ConsumerWidget {
                     onMenuItemTap: () =>
                         ref.read(isDarkMode.notifier).state = true,
                   ),
+            const Divider(),
+            MenuListTile(
+              menuItemTitle: 'Restart Game',
+              menuItemIcon: Icons.restart_alt,
+              onMenuItemTap: () {
+                Navigator.pop(context);
+                gamePlayLogic.resetGame();
+              },
+            ),
             const Divider(),
             MenuListTile(
               menuItemTitle: 'Contact',

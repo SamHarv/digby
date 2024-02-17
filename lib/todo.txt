@@ -1,5 +1,7 @@
-- Refine code again (GameDisplay)
-- Smooth the speeds and motions
+- resetGame() not resetting game speed due to pause resume functionality?
+- Changed velocity for big Digby to 8 from 7 - see how it goes
+
+- Go through each file for final formatting
 - Fix font on Android
 
 - Publish update

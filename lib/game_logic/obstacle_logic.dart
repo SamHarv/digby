@@ -18,7 +18,7 @@ class ObstacleLogic {
     obstacleX[i] = 7.5;
   }
 
-  void moveObstacles(double gameSpeed) {
+  void moveObstacles(gameSpeed) {
     for (int i = 0; i < obstacleX.length; i++) {
       obstacleX[i] -= gameSpeed;
       if (obstacleX[i] < -1.5) {
