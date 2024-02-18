@@ -7,24 +7,19 @@ import 'package:flutter/services.dart';
 import '../characters/obstacle.dart';
 
 class GamePlayLogic {
-  // final Ref _ref;
-
   int lives = 3;
   double time = 0;
   bool gameHasStarted = false;
   int score = 0;
   double gameSpeed = 0.01;
-  late double pauseGameSpeed; // keeps defaulting to hardcoded value
+  late double pauseGameSpeed;
   bool paused = false;
   bool digbyDied = false;
-  bool restarted = false;
 
   PowerUpsLogic powerUpsLogic = PowerUpsLogic();
   GameDisplay gameDisplay = const GameDisplay();
   ObstacleLogic obstacleLogic = ObstacleLogic();
   DigbyLogic digbyLogic = DigbyLogic();
-
-  // GamePlayLogic(this._ref);
 
   bool digbyIsDead() {
     if (lives == 0) {
@@ -48,11 +43,11 @@ class GamePlayLogic {
     digbyLogic.moveLeft();
   }
 
-  void moveMap() {
-    obstacleLogic.moveObstacles(gameSpeed);
+  void moveMap(gameModeInfinite) {
+    obstacleLogic.moveObstacles();
     powerUpsLogic.moveSenzu();
     powerUpsLogic.senzuTryAgain();
-    scoreIncrement();
+    if (!gameModeInfinite) scoreIncrement();
   }
 
   void scoreIncrement() {
@@ -67,7 +62,7 @@ class GamePlayLogic {
 
   void startGame(gameModeInfinite) {
     if (gameHasStarted) {
-      moveMap();
+      moveMap(gameModeInfinite);
       if (!gameModeInfinite) {
         collisionDetection();
         checkPowerUps();
@@ -127,6 +122,7 @@ class GamePlayLogic {
 
   void speedUp() {
     gameSpeed += 0.00004;
+    obstacleLogic.obstacleSpeed += 0.00004;
   }
 
   void resetGame() {
@@ -143,11 +139,20 @@ class GamePlayLogic {
     digbyDied = false;
     gameSpeed = 0.01;
     pauseGameSpeed = 0.01;
+    obstacleLogic.obstacleSpeed = 0.01;
     score = 0;
+    resetGameSpeedInObstacles();
+  }
+
+  void resetGameSpeedInObstacles() {
+    obstacleLogic.obstacleSpeed = gameSpeed;
   }
 
   void saveGameSpeed() {
-    if (paused) pauseGameSpeed = gameSpeed;
+    if (paused) {
+      pauseGameSpeed = gameSpeed;
+      obstacleLogic.obstacleSpeed = 0;
+    }
   }
 
   void pauseGame() {
@@ -158,7 +163,10 @@ class GamePlayLogic {
   }
 
   void loadGameSpeed() {
-    if (!paused) gameSpeed = pauseGameSpeed;
+    if (!paused) {
+      gameSpeed = pauseGameSpeed;
+      obstacleLogic.obstacleSpeed = pauseGameSpeed;
+    }
   }
 
   void resumeGame() {

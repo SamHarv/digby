@@ -24,8 +24,7 @@ class Obstacle extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final mediaHeight = MediaQuery.of(context).size.height;
     final mediaWidth = MediaQuery.of(context).size.width;
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 10),
+    return Container(
       alignment: Alignment(obstacleXPosition, obstacleYPosition),
       child: isGoblin
           ? const Goblin()
