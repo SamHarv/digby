@@ -10,5 +10,6 @@ final gameFont = GoogleFonts.pressStart2p(
   textStyle: const TextStyle(
     color: Colors.white,
     fontSize: 16,
+    fontFamily: "PressStart2P",
   ),
 );

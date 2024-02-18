@@ -7,12 +7,14 @@ class ObstacleLogic {
   List<bool> isGoblin = [false, false, false, false, true, false];
   double obstacleSpeed = 0.01;
 
+  ObstacleLogic({obstacleSpeed = 0.01});
+
   void shrinkObstacle(i) {
     obstacleHeight[i] = 0;
   }
 
   void growObstacle(i) {
-    obstacleHeight[i] = Random().nextDouble() * 0.45;
+    obstacleHeight[i] = Random().nextDouble() * 0.4 + 0.05;
   }
 
   void pushObstacleBackToStart(i) {

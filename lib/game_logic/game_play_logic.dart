@@ -1,14 +1,12 @@
 import 'package:digby/game_logic/digby_logic.dart';
 import 'package:digby/game_logic/obstacle_logic.dart';
 import 'package:digby/game_logic/power_ups_logic.dart';
-import 'package:digby/pages/game_display.dart';
 import 'package:flutter/services.dart';
 
 import '../characters/obstacle.dart';
 
 class GamePlayLogic {
   int lives = 3;
-  double time = 0;
   bool gameHasStarted = false;
   int score = 0;
   double gameSpeed = 0.01;
@@ -17,7 +15,6 @@ class GamePlayLogic {
   bool digbyDied = false;
 
   PowerUpsLogic powerUpsLogic = PowerUpsLogic();
-  GameDisplay gameDisplay = const GameDisplay();
   ObstacleLogic obstacleLogic = ObstacleLogic();
   DigbyLogic digbyLogic = DigbyLogic();
 
@@ -126,6 +123,9 @@ class GamePlayLogic {
   }
 
   void resetGame() {
+    digbyLogic = DigbyLogic();
+    powerUpsLogic = PowerUpsLogic();
+    obstacleLogic = ObstacleLogic();
     digbyLogic.digbyX = 0;
     gameHasStarted = false;
     digbyLogic.digbyY = 1;
@@ -141,11 +141,6 @@ class GamePlayLogic {
     pauseGameSpeed = 0.01;
     obstacleLogic.obstacleSpeed = 0.01;
     score = 0;
-    resetGameSpeedInObstacles();
-  }
-
-  void resetGameSpeedInObstacles() {
-    obstacleLogic.obstacleSpeed = gameSpeed;
   }
 
   void saveGameSpeed() {

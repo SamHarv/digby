@@ -33,7 +33,7 @@ class ActionButton extends ConsumerWidget {
         isHoldingButton = false;
       },
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(72), //16
         child: Container(
           width: mediaWidth * buttonWidth,
           height:

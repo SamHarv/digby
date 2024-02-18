@@ -40,23 +40,22 @@ class AppDrawerMenu extends ConsumerWidget {
             ),
             const Divider(),
             MenuListTile(
-              menuItemTitle: 'Resume Game',
-              menuItemIcon: Icons.play_arrow,
-              onMenuItemTap: () {
-                gamePlayLogic.resumeGame();
-                Navigator.pop(context);
-              },
-            ),
+                menuItemTitle: 'RESUME GAME',
+                menuItemIcon: Icons.play_arrow,
+                onMenuItemTap: () {
+                  gamePlayLogic.resumeGame();
+                  Navigator.pop(context);
+                }),
             const Divider(),
             ref.watch(isInfiniteMode)
                 ? MenuListTile(
-                    menuItemTitle: 'Classic Mode',
+                    menuItemTitle: 'CLASSIC MODE',
                     menuItemIcon: Icons.moving,
                     onMenuItemTap: () =>
                         ref.read(isInfiniteMode.notifier).state = false,
                   )
                 : MenuListTile(
-                    menuItemTitle: 'Infinite Mode',
+                    menuItemTitle: 'INFINITE MODE',
                     menuItemIcon: Icons.all_inclusive,
                     onMenuItemTap: () =>
                         ref.read(isInfiniteMode.notifier).state = true,
@@ -64,29 +63,30 @@ class AppDrawerMenu extends ConsumerWidget {
             const Divider(),
             ref.watch(isDarkMode)
                 ? MenuListTile(
-                    menuItemTitle: 'Day Mode',
+                    menuItemTitle: 'DAY MODE',
                     menuItemIcon: Icons.sunny,
                     onMenuItemTap: () =>
                         ref.read(isDarkMode.notifier).state = false,
                   )
                 : MenuListTile(
-                    menuItemTitle: 'Night Mode',
+                    menuItemTitle: 'NIGHT MODE',
                     menuItemIcon: Icons.dark_mode,
                     onMenuItemTap: () =>
                         ref.read(isDarkMode.notifier).state = true,
                   ),
+            // Below causes speed from prev game to be used rather than default
+            // const Divider(),
+            // MenuListTile(
+            //   menuItemTitle: 'Restart Game',
+            //   menuItemIcon: Icons.restart_alt,
+            //   onMenuItemTap: () {
+            //     Navigator.pop(context);
+            //     gamePlayLogic.resetGame();
+            //   },
+            // ),
             const Divider(),
             MenuListTile(
-              menuItemTitle: 'Restart Game',
-              menuItemIcon: Icons.restart_alt,
-              onMenuItemTap: () {
-                Navigator.pop(context);
-                gamePlayLogic.resetGame();
-              },
-            ),
-            const Divider(),
-            MenuListTile(
-              menuItemTitle: 'Contact',
+              menuItemTitle: 'CONTACT',
               menuItemIcon: Icons.email,
               onMenuItemTap: () => _sendEmail(),
             ),

@@ -31,6 +31,7 @@ class ScoreDisplay extends ConsumerWidget {
                   textStyle: const TextStyle(
                     color: Colors.red,
                     fontSize: 16,
+                    fontFamily: "PressStart2P",
                   ),
                 )
               : gameFont,

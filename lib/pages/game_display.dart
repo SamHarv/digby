@@ -5,6 +5,7 @@ import 'package:digby/custom_widgets/score_display.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import '/game_logic/game_play_logic.dart';
@@ -72,11 +73,15 @@ class _GameDisplayState extends ConsumerState<GameDisplay>
         gamePlayLogic.checkHighScore(db);
         return AlertDialog(
           backgroundColor: Colors.blueGrey,
-          title: const Center(
+          title: Center(
             child: Text(
-              'G A M E  O V E R\n\nWhat have you done?\n\nHe\'s dead.',
-              style: TextStyle(
-                color: Colors.white,
+              'GAME OVER',
+              style: GoogleFonts.pressStart2p(
+                textStyle: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontFamily: "PressStart2P",
+                ),
               ),
             ),
           ),
@@ -85,6 +90,7 @@ class _GameDisplayState extends ConsumerState<GameDisplay>
               onTap: () {
                 setState(() {
                   gamePlayLogic.resetGame();
+                  gamePlayLogic = GamePlayLogic();
                   Navigator.pop(context);
                 });
               },
@@ -93,10 +99,14 @@ class _GameDisplayState extends ConsumerState<GameDisplay>
                 child: Container(
                   padding: const EdgeInsets.all(7),
                   color: Colors.white,
-                  child: const Text(
+                  child: Text(
                     'PLAY AGAIN',
-                    style: TextStyle(
-                      color: Colors.blueGrey,
+                    style: GoogleFonts.pressStart2p(
+                      textStyle: const TextStyle(
+                        color: Colors.blueGrey,
+                        fontSize: 12,
+                        fontFamily: "PressStart2P",
+                      ),
                     ),
                   ),
                 ),
@@ -207,7 +217,7 @@ class _GameDisplayState extends ConsumerState<GameDisplay>
                     child: gamePlayLogic.gameHasStarted
                         ? const Text('')
                         : Text(
-                            'P R E S S  A N Y  B U T T O N  T O  P L A Y',
+                            'PRESS ANY BUTTON TO PLAY',
                             style: gameFont,
                           ),
                   ),
@@ -284,21 +294,21 @@ class _GameDisplayState extends ConsumerState<GameDisplay>
                       action: gamePlayLogic.gameHasStarted
                           ? gamePlayLogic.digbyMoveLeft
                           : startGame,
-                      buttonWidth: 0.23,
+                      buttonWidth: 0.18,
                       actionIcon: Icons.arrow_back,
                     ),
                     ActionButton(
                       action: gamePlayLogic.gameHasStarted
                           ? gamePlayLogic.digbyMoveRight
                           : startGame,
-                      buttonWidth: 0.23,
+                      buttonWidth: 0.18,
                       actionIcon: Icons.arrow_forward,
                     ),
                     ActionButton(
                       action: gamePlayLogic.gameHasStarted
                           ? gamePlayLogic.digbyJump
                           : startGame,
-                      buttonWidth: 0.48,
+                      buttonWidth: 0.58,
                       actionIcon: Icons.arrow_upward,
                     ),
                   ],

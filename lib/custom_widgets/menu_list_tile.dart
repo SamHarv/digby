@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class MenuListTile extends ConsumerWidget {
   final String menuItemTitle;
@@ -24,9 +25,12 @@ class MenuListTile extends ConsumerWidget {
       ),
       title: Text(
         menuItemTitle,
-        style: const TextStyle(
-          fontSize: 24,
-          color: Colors.black,
+        style: GoogleFonts.pressStart2p(
+          textStyle: const TextStyle(
+            color: Colors.black,
+            fontSize: 16,
+            fontFamily: "PressStart2P",
+          ),
         ),
       ),
       onTap: onMenuItemTap,
