@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class MenuListTile extends ConsumerWidget {
+class MenuListTileWidget extends ConsumerWidget {
   final String menuItemTitle;
   final IconData menuItemIcon;
-  final dynamic onMenuItemTap;
+  final VoidCallback onMenuItemTap;
 
-  const MenuListTile({
+  const MenuListTileWidget({
     super.key,
     required this.menuItemTitle,
     required this.menuItemIcon,

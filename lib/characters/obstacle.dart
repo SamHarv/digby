@@ -1,10 +1,10 @@
-import 'package:digby/characters/goblin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../providers.dart';
+import '/characters/goblin.dart';
+import '/providers.dart';
 
-const double obstacleWidth = 0.05;
+const obstacleWidth = 0.05;
 
 class Obstacle extends ConsumerWidget {
   final double obstacleHeight;

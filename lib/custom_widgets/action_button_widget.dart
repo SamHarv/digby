@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../providers.dart';
+import '/providers.dart';
 
-class ActionButton extends ConsumerWidget {
+class ActionButtonWidget extends ConsumerWidget {
   final IconData? actionIcon;
   final dynamic action;
   static bool isHoldingButton = false;
   final double buttonWidth;
 
-  const ActionButton({
+  const ActionButtonWidget({
     super.key,
     this.actionIcon,
     this.action,

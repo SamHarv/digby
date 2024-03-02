@@ -4,7 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_web_plugins/url_strategy.dart';
-import 'pages/game_display.dart';
+
+import 'pages/game_display_page.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +27,7 @@ class Digby extends StatelessWidget {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Digby',
-      home: GameDisplay(),
+      home: GameDisplayPage(),
     );
   }
 }

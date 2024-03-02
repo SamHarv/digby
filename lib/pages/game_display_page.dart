@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:digby/custom_widgets/life_icon.dart';
-import 'package:digby/custom_widgets/score_display.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,8 +9,10 @@ import 'package:hive_flutter/hive_flutter.dart';
 import '/game_logic/game_play_logic.dart';
 import '/data/db.dart';
 import '/providers.dart';
-import '/custom_widgets/app_drawer_menu.dart';
-import '/custom_widgets/action_button.dart';
+import '/custom_widgets/app_drawer_menu_widget.dart';
+import '/custom_widgets/action_button_widget.dart';
+import '/custom_widgets/life_icon_widget.dart';
+import '/custom_widgets/score_display_widget.dart';
 import '/characters/obstacle.dart';
 import '/characters/digby.dart';
 import '/characters/jumping.dart';
@@ -20,14 +20,15 @@ import '/power_ups/senzu.dart';
 import '/power_ups/creatine.dart';
 import '/power_ups/snake_oil.dart';
 
-class GameDisplay extends ConsumerStatefulWidget {
-  const GameDisplay({super.key});
+class GameDisplayPage extends ConsumerStatefulWidget {
+  const GameDisplayPage({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _GameDisplayState();
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _GameDisplayPageState();
 }
 
-class _GameDisplayState extends ConsumerState<GameDisplay>
+class _GameDisplayPageState extends ConsumerState<GameDisplayPage>
     with SingleTickerProviderStateMixin {
   Color backgroundColour = Colors.black;
   bool gameModeInfinite = false;
@@ -69,7 +70,7 @@ class _GameDisplayState extends ConsumerState<GameDisplay>
     showDialog(
       barrierDismissible: false,
       context: context,
-      builder: (BuildContext context) {
+      builder: (context) {
         gamePlayLogic.checkHighScore(db);
         return AlertDialog(
           backgroundColor: Colors.blueGrey,
@@ -118,18 +119,18 @@ class _GameDisplayState extends ConsumerState<GameDisplay>
     );
   }
 
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     gameModeInfinite = ref.watch(isInfiniteMode);
     backgroundColour = ref.watch(isDarkMode) ? Colors.black : Colors.blue;
-    return RawKeyboardListener(
+    return KeyboardListener(
       focusNode: _focusNode,
-      onKey: (event) {
+      onKeyEvent: (event) {
         // Respond to right arrow on keyboard
         if (event.logicalKey == LogicalKeyboardKey.arrowRight &&
-            event is RawKeyDownEvent &&
+            event is KeyDownEvent &&
             (gamePlayLogic.digbyLogic.digbyX + 0.02 < 1)) {
           if (gamePlayLogic.gameHasStarted) {
             gamePlayLogic.digbyLogic.direction = 'right';
@@ -144,7 +145,7 @@ class _GameDisplayState extends ConsumerState<GameDisplay>
           }
           // Respond to left arrow on keyboard
         } else if (event.logicalKey == LogicalKeyboardKey.arrowLeft &&
-            event is RawKeyDownEvent &&
+            event is KeyDownEvent &&
             (gamePlayLogic.digbyLogic.digbyX - 0.02 > -1)) {
           if (gamePlayLogic.gameHasStarted) {
             gamePlayLogic.digbyLogic.direction = 'left';
@@ -158,7 +159,7 @@ class _GameDisplayState extends ConsumerState<GameDisplay>
             startGame();
           }
           // Respond to spacebar or up arrow on keyboard
-        } else if (event is RawKeyDownEvent &&
+        } else if (event is KeyDownEvent &&
             (event.logicalKey == LogicalKeyboardKey.space ||
                 event.logicalKey == LogicalKeyboardKey.arrowUp)) {
           setState(() {
@@ -167,7 +168,7 @@ class _GameDisplayState extends ConsumerState<GameDisplay>
         }
       },
       child: Scaffold(
-        drawer: AppDrawerMenu(gamePlayLogic: gamePlayLogic, ref: ref),
+        drawer: AppDrawerMenuWidget(gamePlayLogic: gamePlayLogic, ref: ref),
         key: _scaffoldKey,
         body: Column(
           children: [
@@ -234,15 +235,15 @@ class _GameDisplayState extends ConsumerState<GameDisplay>
                       isGoblin: gamePlayLogic.obstacleLogic.isGoblin[i],
                     ),
                   Creatine(
-                      creatineXPosition: gameModeInfinite
+                      xPosition: gameModeInfinite
                           ? -3
                           : gamePlayLogic.powerUpsLogic.creatineX),
                   SnakeOil(
-                      snakeOilXPosition: gameModeInfinite
+                      xPosition: gameModeInfinite
                           ? -3
                           : gamePlayLogic.powerUpsLogic.snakeOilX),
                   Senzu(
-                      senzuXPosition: gameModeInfinite
+                      xPosition: gameModeInfinite
                           ? -3
                           : gamePlayLogic.powerUpsLogic.senzuX),
                   Padding(
@@ -260,20 +261,20 @@ class _GameDisplayState extends ConsumerState<GameDisplay>
                             Row(
                               children: [
                                 for (int i = 0; i < 3; i++)
-                                  LifeIcon(
+                                  LifeIconWidget(
                                       lives: gamePlayLogic.lives, lifeIndex: i),
                               ],
                             ),
                           ],
                         ),
-                        ScoreDisplay(
+                        ScoreDisplayWidget(
                           title: 'SCORE',
                           isInfiniteMode: ref.watch(isInfiniteMode),
                           score: ref.watch(isInfiniteMode)
                               ? '0'
                               : '${gamePlayLogic.score}',
                         ),
-                        ScoreDisplay(
+                        ScoreDisplayWidget(
                           title: 'HIGH SCORE',
                           isInfiniteMode: ref.watch(isInfiniteMode),
                           score: '${db.highScore}',
@@ -290,21 +291,21 @@ class _GameDisplayState extends ConsumerState<GameDisplay>
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    ActionButton(
+                    ActionButtonWidget(
                       action: gamePlayLogic.gameHasStarted
                           ? gamePlayLogic.digbyMoveLeft
                           : startGame,
                       buttonWidth: 0.18,
                       actionIcon: Icons.arrow_back,
                     ),
-                    ActionButton(
+                    ActionButtonWidget(
                       action: gamePlayLogic.gameHasStarted
                           ? gamePlayLogic.digbyMoveRight
                           : startGame,
                       buttonWidth: 0.18,
                       actionIcon: Icons.arrow_forward,
                     ),
-                    ActionButton(
+                    ActionButtonWidget(
                       action: gamePlayLogic.gameHasStarted
                           ? gamePlayLogic.digbyJump
                           : startGame,

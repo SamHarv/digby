@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../providers.dart';
+import '/providers.dart';
 
-class ScoreDisplay extends ConsumerWidget {
+class ScoreDisplayWidget extends ConsumerWidget {
   final String title;
   final bool isInfiniteMode;
   final String score;
-  const ScoreDisplay({
+
+  const ScoreDisplayWidget({
     super.key,
     required this.title,
     required this.isInfiniteMode,

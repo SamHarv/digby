@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import '../custom_widgets/action_button.dart';
+import '../custom_widgets/action_button_widget.dart';
 
 class DigbyLogic {
   double digbyX = 0;
@@ -52,7 +52,7 @@ class DigbyLogic {
     Timer.periodic(
       const Duration(milliseconds: 20),
       (timer) {
-        if (const ActionButton(buttonWidth: 0).isHoldingButtonDown() &&
+        if (const ActionButtonWidget(buttonWidth: 0).isHoldingButtonDown() &&
             digbyX + 0.04 < 1) {
           digbyX += 0.04;
           movement = !movement;
@@ -68,7 +68,7 @@ class DigbyLogic {
     Timer.periodic(
       const Duration(milliseconds: 20),
       (timer) {
-        if (const ActionButton(buttonWidth: 0).isHoldingButtonDown() &&
+        if (const ActionButtonWidget(buttonWidth: 0).isHoldingButtonDown() &&
             digbyX - 0.04 > -1) {
           digbyX -= 0.04;
           movement = !movement;

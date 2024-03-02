@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 
 class Senzu extends StatelessWidget {
-  final double senzuXPosition;
-  final double senzuYPosition;
+  final double xPosition;
+  final double yPosition;
 
   const Senzu({
     super.key,
-    required this.senzuXPosition,
-    this.senzuYPosition = 1,
+    required this.xPosition,
+    this.yPosition = 1,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      alignment: Alignment(senzuXPosition, senzuYPosition),
+      alignment: Alignment(xPosition, yPosition),
       child: SizedBox(
         height: MediaQuery.of(context).size.height * 0.17,
         child: Image.asset('images/senzu.png'),

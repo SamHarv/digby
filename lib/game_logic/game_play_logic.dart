@@ -1,9 +1,9 @@
-import 'package:digby/game_logic/digby_logic.dart';
-import 'package:digby/game_logic/obstacle_logic.dart';
-import 'package:digby/game_logic/power_ups_logic.dart';
 import 'package:flutter/services.dart';
 
-import '../characters/obstacle.dart';
+import '/game_logic/digby_logic.dart';
+import '/game_logic/obstacle_logic.dart';
+import '/game_logic/power_ups_logic.dart';
+import '/characters/obstacle.dart';
 
 class GamePlayLogic {
   int lives = 3;

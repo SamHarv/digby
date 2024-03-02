@@ -1,15 +1,16 @@
-import 'package:digby/custom_widgets/menu_list_tile.dart';
-import 'package:digby/game_logic/game_play_logic.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '/custom_widgets/menu_list_tile_widget.dart';
+import '/game_logic/game_play_logic.dart';
 import '/providers.dart';
 
-class AppDrawerMenu extends ConsumerWidget {
+class AppDrawerMenuWidget extends ConsumerWidget {
   final GamePlayLogic gamePlayLogic;
   final WidgetRef ref;
-  const AppDrawerMenu({
+
+  const AppDrawerMenuWidget({
     super.key,
     required this.gamePlayLogic,
     required this.ref,
@@ -39,7 +40,7 @@ class AppDrawerMenu extends ConsumerWidget {
               child: Image.asset('images/2.png'),
             ),
             const Divider(),
-            MenuListTile(
+            MenuListTileWidget(
                 menuItemTitle: 'RESUME GAME',
                 menuItemIcon: Icons.play_arrow,
                 onMenuItemTap: () {
@@ -48,13 +49,13 @@ class AppDrawerMenu extends ConsumerWidget {
                 }),
             const Divider(),
             ref.watch(isInfiniteMode)
-                ? MenuListTile(
+                ? MenuListTileWidget(
                     menuItemTitle: 'CLASSIC MODE',
                     menuItemIcon: Icons.moving,
                     onMenuItemTap: () =>
                         ref.read(isInfiniteMode.notifier).state = false,
                   )
-                : MenuListTile(
+                : MenuListTileWidget(
                     menuItemTitle: 'INFINITE MODE',
                     menuItemIcon: Icons.all_inclusive,
                     onMenuItemTap: () =>
@@ -62,13 +63,13 @@ class AppDrawerMenu extends ConsumerWidget {
                   ),
             const Divider(),
             ref.watch(isDarkMode)
-                ? MenuListTile(
+                ? MenuListTileWidget(
                     menuItemTitle: 'DAY MODE',
                     menuItemIcon: Icons.sunny,
                     onMenuItemTap: () =>
                         ref.read(isDarkMode.notifier).state = false,
                   )
-                : MenuListTile(
+                : MenuListTileWidget(
                     menuItemTitle: 'NIGHT MODE',
                     menuItemIcon: Icons.dark_mode,
                     onMenuItemTap: () =>
@@ -85,7 +86,7 @@ class AppDrawerMenu extends ConsumerWidget {
             //   },
             // ),
             const Divider(),
-            MenuListTile(
+            MenuListTileWidget(
               menuItemTitle: 'CONTACT',
               menuItemIcon: Icons.email,
               onMenuItemTap: () => _sendEmail(),

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class LifeIcon extends ConsumerWidget {
+class LifeIconWidget extends ConsumerWidget {
   final int lives;
   final int lifeIndex;
-  const LifeIcon({
+
+  const LifeIconWidget({
     super.key,
     required this.lives,
     required this.lifeIndex,
