@@ -3,6 +3,7 @@ class PowerUpsLogic {
   double snakeOilX = -0.5;
   double senzuX = 60;
   bool consumedSenzu = false;
+  int timesCreatineConsumed = 0;
 
   void moveSenzu() {
     senzuX -= 0.01;
@@ -13,7 +14,10 @@ class PowerUpsLogic {
   }
 
   void hadCreatine() {
-    creatineX += 2;
+    if (timesCreatineConsumed < 5) {
+      creatineX += 2;
+      timesCreatineConsumed++;
+    }
   }
 
   void snakeOiled() {

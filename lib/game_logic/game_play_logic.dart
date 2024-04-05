@@ -110,7 +110,11 @@ class GamePlayLogic {
       } else if (obstacleCollision() && digbyLogic.digbySize == 0.4) {
         HapticFeedback.lightImpact();
         digbyLogic.standardSizeDigby();
-        powerUpsLogic.creatineX = 0.7;
+        if (powerUpsLogic.timesCreatineConsumed < 5) {
+          powerUpsLogic.creatineX = 0.7;
+        } else {
+          powerUpsLogic.creatineX = -3;
+        }
         obstacleLogic.obstacleX = [2, 3.5, 5, 6.5, 8, 9.5];
         digbyIsDead();
       }
